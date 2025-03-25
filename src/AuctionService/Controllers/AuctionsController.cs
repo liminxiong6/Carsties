@@ -60,11 +60,11 @@ public class AuctionsController : ControllerBase
 
         _context.Auctions.Add(auction);
 
-        var result = await _context.SaveChangesAsync() > 0;
-
         var newAuction = _mapper.Map<AuctionDto>(auction);
 
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+
+        var result = await _context.SaveChangesAsync() > 0; // service bus failed, and whole the transition failed
 
         if (!result) return BadRequest("Could not save changes to the DB");
 
